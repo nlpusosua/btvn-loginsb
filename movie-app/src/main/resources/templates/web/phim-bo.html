@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Danh sách phim bộ</title>
+
+    <link rel="shortcut icon" href="/web-assets/image/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/web-assets/image/favicon.ico" type="image/x-icon">
+
+    <!--Css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+          integrity="sha512-vKMx8UnXk60zUwyUnUPM3HbQo8QfmNx7+ltw8Pm5zLusl1XIfwcxo8DbWCqMGKaWeNxWA8yrx5v3SaVpMvR3CA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="/web-assets/css/style.css">
+</head>
+<body>
+
+<th:block th:replace="~{/web/fragments/header :: header}"></th:block>
+
+<section class="py-4">
+    <div class="container">
+        <h3 class="mb-3">Danh sách phim bộ</h3>
+        <div class="row">
+            <div class="col-2" th:each="movie : ${pageData.getContent()}">
+                <div class="movie-item">
+                    <a th:href="@{/phim/{id}/{slug} (id=${movie.id}, slug=${movie.slug})}"
+                       class="movie-media">
+                        <div class="movie-poster rounded overflow-hidden">
+                            <img class="w-100 h-100"
+                                 th:src="${movie.poster}" th:alt="${movie.name}">
+                        </div>
+                        <p class="mt-2" th:text="${movie.name}">Cô Đi Mà Lấy Chồng Tôi</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center mt-4" id="pagination" th:if="${pageData.getTotalPages() != 1}">
+            <nav aria-label="...">
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/phim-bo (page=${currentPage - 1})}">
+                            <i class="fa-solid fa-caret-left"></i>
+                        </a>
+                    </li>
+
+                    <li class="page-item"
+                        th:each="number: ${#numbers.sequence(1, pageData.getTotalPages())}"
+                        th:classappend="${currentPage == number ? 'active' : ''}"
+                    >
+                        <a class="page-link" th:href="@{/phim-bo (page=${number})}" th:text="${number}">1</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${currentPage == pageData.getTotalPages() ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/phim-bo (page=${currentPage + 1})}">
+                            <i class="fa-solid fa-caret-right"></i></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<th:block th:replace="~{/web/fragments/footer :: footer}"></th:block>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+<script src="/web-assets/js/common.js"></script>
+</body>
+</html>
