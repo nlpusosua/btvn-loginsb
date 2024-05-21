@@ -45,8 +45,9 @@ const formatDate = dateStr => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
 }
-const reviewListEl = document.querySelector(".review-list");
-const renderReview = reviews => {
+
+
+const reviewListEl = document.querySelector(".review-list");const renderReview = reviews => {
     let html = "";
     reviews.forEach(review => {
         html += `
@@ -72,10 +73,10 @@ const renderReview = reviews => {
             currentUser != null && currentUser.id === review.user.id
                 ? `
                                 <div>
-                                    <button class="border-0 bg-transparent btn-edit-review text-primary me-2 text-decoration-underline">
+                                    <button class="border-0 bg-transparent btn-edit-review text-primary me-2 text-decoration-underline" onclick="editReview(${review.id})">
                                         Sửa
                                     </button>
-                                    <button class="border-0 bg-transparent btn-delete-review text-danger text-decoration-underline">
+                                    <button class="border-0 bg-transparent btn-delete-review text-danger text-decoration-underline" onclick="deleteReview(${review.id})">
                                         Xóa
                                     </button>
                                 </div>
@@ -84,11 +85,12 @@ const renderReview = reviews => {
         }
                 </div>
             </div>
-        `
-    })
+        `;
+    });
 
     reviewListEl.innerHTML = html;
-}
+};
+
 
 // Tạo review
 const formReviewEl = document.getElementById("form-review");
@@ -141,58 +143,70 @@ formReviewEl.addEventListener("submit", async (e) => {
     }
 })
 
-$('#reviewForm').validate({
-    rules: {
-        title: {
-            required: true,
-            minlength: 5
-        },
-        content: {
-            required: true,
-            minlength: 20
+
+// Sửa review
+const editReview = async (id) => {
+    const review = reviews.find(review => review.id === id);
+    if (!review) {
+        toastr.error("Không tìm thấy đánh giá để sửa");
+        return;
+    }
+
+    // Điền thông tin review hiện tại vào form
+    currentRating = review.rating;
+    reviewContentEl.value = review.content;
+    highlightStars(currentRating);
+
+    // Hiển thị modal sửa review
+    myModalReviewEl.show();
+
+    formReviewEl.onsubmit = async (e) => {
+        e.preventDefault();
+
+        if (currentRating === 0) {
+            alert("Vui lòng chọn số sao");
+            return;
         }
-    },
-    messages: {
-        title: {
-            required: "Tiêu đề không được để trống",
-            minlength: "Tiêu đề phải có ít nhất 5 ký tự"
-        },
-        content: {
-            required: "Nội dung không được để trống",
-            minlength: "Nội dung phải có ít nhất 20 ký tự"
+
+        if (reviewContentEl.value.trim() === "") {
+            alert("Nội dung đánh giá không được để trống");
+            return;
         }
-    },
-    errorElement: 'span',
-    errorPlacement: function (error, element) {
-        error.addClass('invalid-feedback');
-        element.closest('.form-group').append(error);
-    },
-    highlight: function (element, errorClass, validClass) {
-        $(element).addClass('is-invalid');
-    },
-    unhighlight: function (element, errorClass, validClass) {
-        $(element).removeClass('is-invalid');
-    },
-    submitHandler: function (form) {
+
         const data = {
-            title: $('#title').val(),
-            content: $('#content').val()
+            content: reviewContentEl.value,
+            rating: currentRating,
+            movieId: movie.id
         };
 
-        // Xử lý gửi form bằng AJAX
-        $.ajax({
-            type: 'POST',
-            url: '/api/reviews',
-            data: JSON.stringify(data),
-            contentType: 'application/json',
-            success: function (response) {
-                toastr.success("Tạo review thành công");
-            },
-            error: function (error) {
-                toastr.error("Tạo review thất bại");
-            }
-        });
+        try {
+            const res = await axios.put(`/api/reviews/${id}`, data);
+            const index = reviews.findIndex(r => r.id === id);
+            reviews[index] = res.data;
+            renderReview(reviews);
 
-        return false; // Ngăn chặn hành vi mặc định của form
+            // Đóng modal
+            myModalReviewEl.hide();
+            toastr.success("Đã sửa đánh giá thành công");
+        } catch (error) {
+            console.error('Error:', error);
+            toastr.error("Sửa đánh giá thất bại");
+        }
+    };
+};
+
+// Xóa review
+const deleteReview = async (id) => {
+    const confirmDelete = window.confirm("Bạn có chắc muốn xóa đánh giá này không?");
+    if (!confirmDelete) return;
+
+    try {
+        await axios.delete(`/api/reviews/${id}`);
+        reviews = reviews.filter(review => review.id !== id);
+        renderReview(reviews);
+        toastr.success("Đã xóa đánh giá thành công");
+    } catch (error) {
+        console.error('Error:', error);
+        toastr.error("Xóa đánh giá thất bại");
     }
-});2
+};

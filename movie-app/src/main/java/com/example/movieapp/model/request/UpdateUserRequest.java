@@ -1,5 +1,6 @@
 package com.example.movieapp.model.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,8 +10,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpsertReviewRequest {
- String content;
- int rating;
- int movieId;
+public class UpdateUserRequest {
+    int id;
+    @NotBlank(message = "username đang trống")
+    String username;
 }

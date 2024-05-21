@@ -42,7 +42,7 @@
                                 <li><a class="dropdown-item" href="#"
                                        th:if="${session.currentUser.role.toString().equals('ADMIN')}">Trang quản trị</a>
                                 </li>
-                                <li><a class="dropdown-item" href="#">Thông tin cá nhân</a></li>
+                                <li><a class="dropdown-item" th:href="@{/infor/{id}(id=${session.currentUser.id})}" id="user-infor"> Thông tin cá nhân</a></li>
                                 <li><a class="dropdown-item" href="#">Lịch sử xem phim</a></li>
                                 <li><a class="dropdown-item" href="#">Phim yêu thích</a></li>
                                 <li><button id="logoutButton" class="dropdown-item" href="#" >Đăng xuất</button></li>
@@ -55,4 +55,7 @@
     </nav>
 </header>
 </body>
+
+
+
 </html>

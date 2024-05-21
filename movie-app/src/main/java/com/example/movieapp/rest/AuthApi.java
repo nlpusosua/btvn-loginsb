@@ -27,4 +27,5 @@ public class AuthApi {
         authService.logout();
         return ResponseEntity.ok("Logout successfully");
     }
+
 }

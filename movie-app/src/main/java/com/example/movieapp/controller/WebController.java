@@ -3,12 +3,15 @@ package com.example.movieapp.controller;
 import com.example.movieapp.entity.Episode;
 import com.example.movieapp.entity.Movie;
 import com.example.movieapp.entity.Review;
+import com.example.movieapp.entity.User;
 import com.example.movieapp.model.enums.MovieType;
+import com.example.movieapp.repository.UserRepository;
 import com.example.movieapp.service.EpisodeService;
 import com.example.movieapp.service.MovieService;
 import com.example.movieapp.service.ReviewService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -92,5 +96,19 @@ public class WebController {
     @GetMapping("/dang-xuat")
     public String getLogout() {
         return "web/logout";
+    }
+
+    @Autowired
+    UserRepository  userRepository;
+    @GetMapping("/infor/{id}")
+    public String getInfor (Model model, @PathVariable int id) {
+        Optional<User> user = userRepository.findById(id);
+        model.addAttribute("user", user);
+        return "web/infor";
+    }
+
+    @GetMapping("/change-pass")
+    public String changePass() {
+        return "web/changepass";
     }
 }
