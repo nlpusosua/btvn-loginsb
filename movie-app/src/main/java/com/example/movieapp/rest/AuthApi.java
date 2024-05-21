@@ -21,4 +21,10 @@ public class AuthApi {
         authService.login(request);
         return ResponseEntity.ok("Login successfully");
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(){
+        authService.logout();
+        return ResponseEntity.ok("Logout successfully");
+    }
 }

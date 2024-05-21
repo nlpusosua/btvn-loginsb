@@ -69,8 +69,8 @@ const renderReview = reviews => {
                     </div>
                     <p class="rating-content mt-1 mb-0 text-muted">${review.content}</p>
                     ${
-                        currentUser != null && currentUser.id === review.user.id
-                            ? `
+            currentUser != null && currentUser.id === review.user.id
+                ? `
                                 <div>
                                     <button class="border-0 bg-transparent btn-edit-review text-primary me-2 text-decoration-underline">
                                         Sửa
@@ -80,8 +80,8 @@ const renderReview = reviews => {
                                     </button>
                                 </div>
                                 `
-                            : ''
-                    }
+                : ''
+        }
                 </div>
             </div>
         `
@@ -140,3 +140,59 @@ formReviewEl.addEventListener("submit", async (e) => {
         console.log(e)
     }
 })
+
+$('#reviewForm').validate({
+    rules: {
+        title: {
+            required: true,
+            minlength: 5
+        },
+        content: {
+            required: true,
+            minlength: 20
+        }
+    },
+    messages: {
+        title: {
+            required: "Tiêu đề không được để trống",
+            minlength: "Tiêu đề phải có ít nhất 5 ký tự"
+        },
+        content: {
+            required: "Nội dung không được để trống",
+            minlength: "Nội dung phải có ít nhất 20 ký tự"
+        }
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+    },
+    submitHandler: function (form) {
+        const data = {
+            title: $('#title').val(),
+            content: $('#content').val()
+        };
+
+        // Xử lý gửi form bằng AJAX
+        $.ajax({
+            type: 'POST',
+            url: '/api/reviews',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (response) {
+                toastr.success("Tạo review thành công");
+            },
+            error: function (error) {
+                toastr.error("Tạo review thất bại");
+            }
+        });
+
+        return false; // Ngăn chặn hành vi mặc định của form
+    }
+});2

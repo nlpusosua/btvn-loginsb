@@ -281,7 +281,7 @@
 
 <script th:inline="javascript">
     const movie = [[${movie}]];
-    const reviews = [[${reviews}]];
+    let reviews = [[${reviews}]];
     const currentUser = [[${session.currentUser}]];
     console.log(movie)
     console.log(reviews);

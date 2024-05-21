@@ -130,5 +130,23 @@
         }
     })
 </script>
+
+<script>
+    document.getElementById("logoutButton").addEventListener("click", async (event) => {
+        event.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ a
+        try {
+            await axios.post("/api/auth/logout");
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1000); // sau 1s chuyển hướng về trang chủ
+            toastr.success("Đăng xuat thành công");
+        } catch (error) {
+            console.error('Error:', error);
+            toastr.error("Đăng xuất thất bại");
+        }
+    });
+</script>
+
+
 </body>
 </html>
